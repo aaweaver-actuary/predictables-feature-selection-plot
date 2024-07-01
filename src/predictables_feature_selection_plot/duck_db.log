@@ -1422,3 +1422,741 @@ create or replace table test.preds as from temp
     
     select * exclude (idx) from joined
     
+2024-07-01 13:14:49,179 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:14:52,224 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:14:52,255 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:14:52,268 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:14:52,284 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:14:52,296 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:14:52,375 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:14:52,613 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:14:52,671 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:14:52,714 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:14:52,768 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:14:52,807 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:14:52,861 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:14:54,682 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:14:58,796 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:14:58,826 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:14:58,885 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:14:58,909 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:14:58,961 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:14:58,983 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:14:59,025 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:14:59,046 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:15:00,957 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:21:49,593 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:21:49,776 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:21:49,797 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:21:49,811 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:21:49,820 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:21:49,828 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:21:49,891 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:21:49,930 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:21:49,986 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:21:50,022 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:21:50,065 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:21:50,107 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:21:50,153 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:21:50,203 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:21:50,457 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:21:50,493 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:21:50,534 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:21:50,554 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:21:50,592 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:21:50,614 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:21:50,656 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:21:50,677 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:21:50,732 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:23:11,037 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:23:11,191 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:23:11,207 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:23:11,220 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:23:11,228 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:23:11,240 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:23:11,298 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:23:11,338 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:23:11,386 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:23:11,426 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:23:11,475 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:23:11,540 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:23:11,593 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:23:11,644 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:23:11,894 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:23:11,928 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:23:11,972 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:23:11,993 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:23:12,037 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:23:12,057 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:23:12,119 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:23:12,144 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:23:12,211 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:24:04,158 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:24:04,378 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:24:04,393 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:24:04,411 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:24:04,421 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:24:04,430 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:24:04,489 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:24:04,528 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:24:04,579 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:24:04,622 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:24:04,667 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:24:04,706 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:24:04,766 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:24:04,825 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:24:05,054 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:24:05,078 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:24:05,124 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:24:05,142 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:24:05,187 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:24:05,207 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:24:05,245 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:24:05,267 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:24:05,321 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:31:31,672 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:31:31,847 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:31:31,865 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:31:31,882 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:31:31,890 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:31:31,899 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:31:31,960 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:31:32,006 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:31:32,054 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:31:32,097 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:31:32,145 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:31:32,184 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:31:32,227 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:31:32,275 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:31:32,578 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:31:32,623 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:31:32,667 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:31:32,686 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:31:32,726 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:31:32,745 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:31:32,788 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:31:32,807 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:31:32,859 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:32:58,740 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:32:58,972 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:32:59,001 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:32:59,016 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:32:59,026 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:32:59,037 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:32:59,090 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:32:59,127 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:32:59,181 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:32:59,219 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:32:59,267 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:32:59,308 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:32:59,355 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:32:59,405 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:32:59,637 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:32:59,667 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:32:59,714 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:32:59,733 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:32:59,773 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:32:59,800 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:32:59,838 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:32:59,858 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:32:59,911 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:33:26,827 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:33:26,990 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:33:27,006 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:33:27,019 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:33:27,028 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:33:27,038 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:33:27,090 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:33:27,128 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:33:27,178 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:33:27,222 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:33:27,267 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:33:27,306 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:33:27,355 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:33:27,405 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:33:27,640 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:33:27,673 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:33:27,724 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:33:27,743 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:33:27,785 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:33:27,806 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:33:27,845 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:33:27,864 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:33:27,916 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:35:11,543 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:35:11,692 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:35:11,710 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:35:11,723 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:35:11,732 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:35:11,739 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:35:11,794 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:35:11,838 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:35:11,893 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:35:11,931 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:35:11,979 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:35:12,019 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:35:12,069 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:35:12,119 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:35:12,356 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:35:12,398 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:35:12,441 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:35:12,460 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:35:12,503 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:35:12,520 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:35:12,560 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:35:12,579 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:35:12,631 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:38:00,930 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:38:01,091 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:38:01,113 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:38:01,122 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:38:01,131 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:38:01,140 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:38:01,198 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:38:01,259 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:38:01,321 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:38:01,368 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:38:01,412 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:38:01,452 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:38:01,503 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:38:01,573 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:38:01,834 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:38:01,875 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:38:01,926 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:38:01,951 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:38:01,997 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:38:02,019 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:38:02,064 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:38:02,085 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:38:02,146 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    

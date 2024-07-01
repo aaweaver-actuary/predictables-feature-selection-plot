@@ -1,3 +1,3 @@
-from .logistic_regression import LogisticRegressionModel
+from .logistic_regression import LogisticRegression
 
-__all__ = ["LogisticRegressionModel"]
+__all__ = ["LogisticRegression"]

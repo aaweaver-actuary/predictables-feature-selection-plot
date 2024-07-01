@@ -8,11 +8,11 @@ import plotly.graph_objects as go
 from sklearn.base import BaseEstimator
 from typing import List
 
-from sklearn.linear_model import LogisticRegression
 from predictables_feature_selection_plot.utils import (
     validate_columns,
     generate_decision_boundary,
 )
+from predictables_feature_selection_plot.model.logistic_regression import LogisticRegression
 import logging
 
 __all__ = ["ProbabilityPlotter"]
@@ -236,7 +236,7 @@ class ProbabilityPlotter:
                 )
             )
 
-            
+
 
             return fig
         except Exception as e:

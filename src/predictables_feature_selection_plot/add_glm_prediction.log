@@ -1,0 +1,100 @@
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - Creating DuckDB with db_file=data/db.duckdb
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists raw;
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists train;
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists val;
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create schema if not exists test;
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.X as from read_parquet('data/X.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.y as from read_parquet('data/y.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.X as from read_parquet('data/X_train.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.y as from read_parquet('data/y_train.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.X as from read_parquet('data/X_val.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.y as from read_parquet('data/y_val.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.X as from read_parquet('data/X_test.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.y as from read_parquet('data/y_test.parquet')
+2024-07-01 13:48:59 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from raw.X
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table raw.preds as from temp
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from train.X
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table train.preds as from temp
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from val.X
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table val.preds as from temp
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+from test.X
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for write op:
+create or replace table test.preds as from temp
+2024-07-01 13:49:00 - predictables_feature_selection_plot.duck_db - DEBUG - query for read op:
+
+    with
+       X as (
+        select
+            row_number() over () as idx,
+            *
+       from raw.X
+       ),
+
+       y as (
+        select
+            row_number() over () as idx,
+            try_cast(try_cast(target as integer) as text) as actual
+        from raw.y
+       ),
+
+       preds as (
+        select
+            row_number() over () as idx,
+            *
+        from raw.preds
+       ),
+
+       joined as (
+        select
+            X.*,
+            y.actual,
+            preds.preds
+        
+       from X
+       left join y
+       on X.idx = y.idx
+       left join preds
+       on X.idx = preds.idx
+       )
+    
+    select * exclude (idx) from joined
+    
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - DEBUG - Preparing features for GLM: mean_radius_quintile
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - DEBUG - Feature mean_radius_quintile is categorical: True
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - DEBUG - Preparing categorical feature for GLM: mean_radius_quintile
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - DEBUG - Since categorical, dummifying feature mean_radius_quintile:
+      Q2     Q3     Q4     Q5
+0  False  False  False   True
+1  False  False  False   True
+2  False  False  False   True
+3   True  False  False  False
+4  False  False  False   True
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - DEBUG - Attempting to fit GLM model on features:
+      Q2     Q3     Q4     Q5
+0  False  False  False   True
+1  False  False  False   True
+2  False  False  False   True
+3   True  False  False  False
+4  False  False  False   True
+2024-07-01 13:49:00 - predictables_feature_selection_plot.utils.add_glm_prediction - ERROR - Error fitting GLM model: numpy boolean subtract, the `-` operator, is not supported, use the bitwise_xor, the `^` operator, or the logical_xor function instead.
